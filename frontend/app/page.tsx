@@ -10,11 +10,9 @@ import Cart from './components/Cart';
 
 export default function Home() {
   // const [previousOdds, setPreviousOdds] = useState([]);
+  const [status, setStatus] = useState<boolean>(true);
   const [currentOdds, setCurrentOdds] = useState<any>([]);
 
-  // const [moneylineComponents, setMoneylineComponents] = useState([]);
-
-  // const [selectedOutcomes, setSelectedOutcomes] = useState([]);
   const [selectedOutcome, setSelectedOutcome] = useState<any>(null);
   const [outcomeToOddsMap, setOutcomeToOddsMap] = useState<Map<any, any>>();
   const [outcomeToEventIdMap, setOutcomeToEventIdMap] = useState<Map<any, any>>();
@@ -22,7 +20,7 @@ export default function Home() {
   useEffect(() => {
     async function updateOdds() {
       // setPreviousOdds(currentOdds);
-      const { data: current_odds } = await supabase.from('current_odds').select()
+      const { data: current_odds } = await supabase.from('current_odds').select();
       if (current_odds) {
         setCurrentOdds(current_odds.sort((a, b) => a.event_id - b.event_id));
         let newOutcomeToOddsMap = new Map();
@@ -43,35 +41,40 @@ export default function Home() {
       // }
     }
 
+    async function updateStatus() {
+      const { data: status } = await supabase.from('status').select();
+      if (status) {
+        setStatus(status[0].status);
+      }
+    }
+
     updateOdds();
+    updateStatus();
     const intervalId = setInterval(() => {
-      // console.log("updating odds...");
       updateOdds();
+      updateStatus();
     }, 5000);
 
     return () => clearInterval(intervalId);
   }, []);
 
-  // useEffect(() => {
-  //   if (currentOdds.length === previousOdds.length) {
-  //     const newMoneylineComponents = [];
-  //     for (let i = 0; i < currentOdds.length; i++) {
-  //       newMoneylineComponents.push(
-  //         <Moneyline
-  //           team_a={currentOdds[i].team_a}
-  //           team_b={currentOdds[i].team_b}
-  //           curr_odds_a={currentOdds[i].odds_a_american}
-  //           curr_odds_b={currentOdds[i].odds_b_american}
-  //           prev_odds_a={previousOdds[i].odds_a_american ?? null}
-  //           prev_odds_b={previousOdds[i].odds_b_american ?? null}
-  //         />
-  //       );
-  //     }
+  if (!status) {
+    return (
+      <div>
+        <NavBar />
+        <div style={{ padding: 16 }}>
+          <div className="header">
+            <p style={{ fontSize: 28, fontWeight: 600 }}>HUNTS VS M&T</p>
+            <p className="title" style={{ fontWeight: 600 }}>FIGHT NIGHT</p>
+            <p style={{ fontSize: 14, opacity: 0.8, fontWeight: 400 }}>FIGHT FOR THE GREATEST</p>
+            <p style={{ fontSize: 14, opacity: 0.8, fontWeight: 400 }}>26 April • 7-8 PM</p>
+          </div>
 
-  //     setMoneylineComponents(newMoneylineComponents);
-  //   }
-
-  // }, [currentOdds, previousOdds]);
+          <p className="section">Currently experiencing technical difficulties... check back soon!</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
