@@ -32,98 +32,112 @@ def log_txns():
     #     .data
     # )
 
-    try:
-        timestamp = datetime.now(timezone.utc).isoformat()
-        event_data = client.table("current_odds").select("*").execute().data
-        m_outcome_to_event_id = {}
-        m_outcome_to_odds = {}
-        for event in event_data:
-            m_outcome_to_event_id[event["outcome_a"]] = event["event_id"]
-            m_outcome_to_event_id[event["outcome_b"]] = event["event_id"]
-            m_outcome_to_odds[event["outcome_a"]] = event["odds_a"]
-            m_outcome_to_odds[event["outcome_b"]] = event["odds_b"]
 
-        cancelled_txn_data = (
-            client.table("completed_txns")
-            .select("payment_id")
-            .eq("cancelled", True)
-            .execute()
-            .data
-        )
-        cancelled_txn_payment_ids = set(
-            [cancelled_txn["payment_id"] for cancelled_txn in cancelled_txn_data]
-        )
+client = create_supabase_client()
+venmo_client = venmo_api.Client(access_token=venmo_token)
 
-        paid_txn_data = (
-            client.table("completed_txns")
-            .select("payment_id")
-            .eq("paid", True)
-            .execute()
-            .data
-        )
-        
-        paid_txn_payment_ids = set(
-            [paid_txn["payment_id"] for paid_txn in paid_txn_data]
-        )
+# pending_txns_db = (
+#     client.table("pending_txns")
+#     .select("*")
+#     .eq("paid", False)
+#     .eq("cancelled", False)
+#     .execute()
+#     .data
+# )
 
-        transactions = venmo_client.user.get_user_transactions(
-            user_id=2612203773493248301 # hard coded as ARHAM, potentially change
-        )
-        while transactions:
-            records = []
-            for txn in transactions:
-                txn_id = txn.id
-                txn_comment = txn.note
-                actor = txn.actor
-                venmo_id = actor.id
-                venmo_username = actor.username
-                txn_status = txn.status=="settled"
-                payment_type = txn.payment_type=='pay'
-                txn_wager_amount = txn.amount  
+try:
+    timestamp = datetime.now(timezone.utc).isoformat()
+    event_data = client.table("current_odds").select("*").execute().data
+    m_outcome_to_event_id = {}
+    m_outcome_to_odds = {}
+    for event in event_data:
+        m_outcome_to_event_id[event["outcome_a"]] = event["event_id"]
+        m_outcome_to_event_id[event["outcome_b"]] = event["event_id"]
+        m_outcome_to_odds[event["outcome_a"]] = event["odds_a"]
+        m_outcome_to_odds[event["outcome_b"]] = event["odds_b"]
 
-                if (
-                    txn_comment.find("Odds subject to line movement") == -1
-                    or txn_comment.find(" (") == -1
-                ):
-                    # print("Invalid txn: " + txn)
-                    continue
+    cancelled_txn_data = (
+        client.table("completed_txns")
+        .select("payment_id")
+        .eq("cancelled", True)
+        .execute()
+        .data
+    )
+    cancelled_txn_payment_ids = set(
+        [cancelled_txn["payment_id"] for cancelled_txn in cancelled_txn_data]
+    )
 
-                txn_outcome = txn_comment.split(" (", 1)[0].strip()
-                if txn_outcome not in m_outcome_to_event_id:
-                    # print("Invalid txn: " + txn)
-                    continue
+    paid_txn_data = (
+        client.table("completed_txns")
+        .select("payment_id")
+        .eq("paid", True)
+        .execute()
+        .data
+    )
+    
+    paid_txn_payment_ids = set(
+        [paid_txn["payment_id"] for paid_txn in paid_txn_data]
+    )
 
-                if txn_id in cancelled_txn_payment_ids:
-                    continue
+    transactions = venmo_client.user.get_user_transactions(
+        user_id=2612203773493248301,  # hard coded as ARHAM, potentially change
+        limit=1000
+    )
+    while transactions:
+        records = []
+        for txn in transactions:
+            txn_id = txn.id
+            txn_comment = txn.note
+            actor = txn.actor
+            venmo_id = actor.id
+            venmo_username = actor.username
+            txn_status = txn.status=="settled"
+            payment_type = txn.payment_type=='pay'
+            txn_wager_amount = txn.amount  
 
-                if txn_id in paid_txn_payment_ids:
-                    continue
+            if (
+                txn_comment.find("Odds subject to line movement") == -1
+                or txn_comment.find(" (") == -1
+            ):
+                # print("Invalid txn: " + txn)
+                continue
 
-                txn_event_id = m_outcome_to_event_id[txn_outcome]
-                txn_odds = int(m_outcome_to_odds[txn_outcome])
+            txn_outcome = txn_comment.split(" (", 1)[0].strip()
+            if txn_outcome not in m_outcome_to_event_id:
+                # print("Invalid txn: " + txn)
+                continue
 
-                record = {
-                    "payment_id": txn_id,
-                    "venmo_id": venmo_id,
-                    "venmo_username": venmo_username,
-                    "event": txn_event_id,
-                    "paid": False if txn_status and payment_type else False,
-                    "cancelled": True if not payment_type and txn_status else False,
-                    "payout": calculate_payout(txn_wager_amount, txn_odds),
-                    "outcome": txn_outcome,
-                    "timestamp": timestamp,
-                    "wager_amount": txn_wager_amount,
-                    "odds": txn_odds,
-                }
+            if txn_id in cancelled_txn_payment_ids:
+                continue
 
-                records += [record]
+            if txn_id in paid_txn_payment_ids:
+                continue
 
-            print(f"Upserting txns...")
-            client.table("completed_txns").upsert(records).execute()
+            txn_event_id = m_outcome_to_event_id[txn_outcome]
+            txn_odds = int(m_outcome_to_odds[txn_outcome])
 
-            transactions = transactions.get_next_page()
+            record = {
+                "payment_id": txn_id,
+                "venmo_id": venmo_id,
+                "venmo_username": venmo_username,
+                "event": txn_event_id,
+                "paid": True if txn_status and payment_type else False,
+                "cancelled": True if not payment_type and txn_status else False,
+                "payout": 2 ,# calculate_payout(txn_wager_amount, txn_odds),
+                "outcome": txn_outcome,
+                "timestamp": timestamp,
+                "wager_amount": txn_wager_amount,
+                "odds": txn_odds,
+            }
 
-        # pending_txns_venmo = venmo_client.payment.get_charge_payments()
+            print(record)
+
+            records += [record]
+
+        print(f"Upserting txns...")
+        transactions = transactions.get_next_page()
+
+                # pending_txns_venmo = venmo_client.payment.get_charge_payments()
         # pending_txns_venmo = {
         #     str(venmo_txn.id): venmo_txn for venmo_txn in pending_txns_venmo
         # }
@@ -161,9 +175,11 @@ def log_txns():
         #             venmo_client.payment.cancel_payment(payment_id=db_txn["payment_id"])
         #         except Exception as e:
         #             print("Error:", e)
+        # client.table("completed_txns").upsert(records).execute()
 
-    except Exception as e:
-        print("Error:", e)
+
+except Exception as e:
+    print("Error:", e)
 
 
 def schedule_log_txns(period=5):
