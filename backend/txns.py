@@ -81,7 +81,7 @@ try:
 
     transactions = venmo_client.user.get_user_transactions(
         user_id=2612203773493248301,  # hard coded as ARHAM, potentially change
-        limit=1000
+        limit=30
     )
     while transactions:
         records = []
@@ -123,7 +123,7 @@ try:
                 "event": txn_event_id,
                 "paid": True if txn_status and payment_type else False,
                 "cancelled": True if not payment_type and txn_status else False,
-                "payout": 2 ,# calculate_payout(txn_wager_amount, txn_odds),
+                "payout": calculate_payout(txn_wager_amount, txn_odds),
                 "outcome": txn_outcome,
                 "timestamp": timestamp,
                 "wager_amount": txn_wager_amount,
@@ -136,6 +136,7 @@ try:
 
         print(f"Upserting txns...")
         transactions = transactions.get_next_page()
+        client.table("completed_txns").upsert(records).execute()
 
                 # pending_txns_venmo = venmo_client.payment.get_charge_payments()
         # pending_txns_venmo = {
@@ -175,12 +176,10 @@ try:
         #             venmo_client.payment.cancel_payment(payment_id=db_txn["payment_id"])
         #         except Exception as e:
         #             print("Error:", e)
-        # client.table("completed_txns").upsert(records).execute()
 
 
 except Exception as e:
     print("Error:", e)
-
 
 def schedule_log_txns(period=5):
     while True:
