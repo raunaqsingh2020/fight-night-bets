@@ -23,9 +23,9 @@ export default function Home() {
         .select()
         .eq('event_id', event_id)
         .order('timestamp', { ascending: false })
-        .limit(2);
+        .limit(3);
 
-      return historical_odds ? historical_odds[1] : null;
+      return historical_odds ? historical_odds[2] : null;
     }
 
     async function updateOdds() {
