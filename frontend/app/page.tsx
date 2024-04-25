@@ -9,21 +9,20 @@ import Moneyline from './components/Moneyline';
 import Cart from './components/Cart';
 
 export default function Home() {
-  // const [previousOdds, setPreviousOdds] = useState([]);
   const [status, setStatus] = useState<boolean>(true);
   const [currentOdds, setCurrentOdds] = useState<any>([]);
 
   const [selectedOutcome, setSelectedOutcome] = useState<any>(null);
   const [outcomeToOddsMap, setOutcomeToOddsMap] = useState<Map<any, any>>();
+  const [outcomeToPreviousOddsMap, setOutcomeToPreviousOddsMap] = useState<Map<any, any>>();
   const [outcomeToEventIdMap, setOutcomeToEventIdMap] = useState<Map<any, any>>();
 
   useEffect(() => {
     async function updateOdds() {
-      // setPreviousOdds(currentOdds);
       const { data: current_odds } = await supabase.from('current_odds').select();
       if (current_odds) {
-        setCurrentOdds(current_odds.sort((a, b) => a.event_id - b.event_id));
         let newOutcomeToOddsMap = new Map();
+        let newOutcomeToPreviousOddsMap = new Map();
         let newOutcomeToEventIdMap = new Map();
         for (const odd of current_odds) {
           newOutcomeToOddsMap.set(odd.outcome_a, odd.odds_a);
@@ -33,12 +32,18 @@ export default function Home() {
           newOutcomeToEventIdMap.set(odd.outcome_b, odd.event_id);
         }
 
+        const currentOddsClone = currentOdds.map((a: any) => { return { ...a } });
+        for (const odd of currentOddsClone) {
+          newOutcomeToPreviousOddsMap.set(odd.outcome_a, odd.odds_a);
+          newOutcomeToPreviousOddsMap.set(odd.outcome_b, odd.odds_b);
+        }
+
         setOutcomeToOddsMap(newOutcomeToOddsMap);
+        setOutcomeToPreviousOddsMap(newOutcomeToPreviousOddsMap);
         setOutcomeToEventIdMap(newOutcomeToEventIdMap);
+
+        setCurrentOdds(current_odds.sort((a, b) => a.event_id - b.event_id));
       }
-      // if (previousOdds.length === 0) {
-      //   setPreviousOdds(current_odds);
-      // }
     }
 
     async function updateStatus() {
@@ -53,7 +58,7 @@ export default function Home() {
     const intervalId = setInterval(() => {
       updateOdds();
       updateStatus();
-    }, 5000);
+    }, 6000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -96,8 +101,8 @@ export default function Home() {
             outcome_b={item.outcome_b}
             curr_odds_a={item.odds_a}
             curr_odds_b={item.odds_b}
-            prev_odds_a={null}
-            prev_odds_b={null}
+            prev_odds_a={outcomeToPreviousOddsMap?.get(item.outcome_a) ?? null}
+            prev_odds_b={outcomeToPreviousOddsMap?.get(item.outcome_b) ?? null}
             selected_outcome={selectedOutcome}
             select_outcome={setSelectedOutcome}
           />
