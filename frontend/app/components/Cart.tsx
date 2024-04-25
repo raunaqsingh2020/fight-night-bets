@@ -89,15 +89,15 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
             // const response = await axios.get(queryUrl);
             // console.log(response.data)
 
-            // if (isMobile) {
-            //     window.location.href = response.data;
-            // } else {
-
             const venmoLink: string | null = await getVenmoLink(isMobile);
             if (venmoLink) {
-                var win = window.open(venmoLink, '_blank');
-                if (win)
-                    win.focus();
+                if (isMobile) {
+                    window.location.href = venmoLink;
+                } else {
+                    var win = window.open(venmoLink, '_blank');
+                    if (win)
+                        win.focus();
+                }
             }
 
             setIsReallyProcessing(false);
