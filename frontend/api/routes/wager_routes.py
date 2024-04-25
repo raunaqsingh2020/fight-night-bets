@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+import time
 
 from api.supabase import create_supabase_client
 import venmo_api
@@ -44,7 +45,10 @@ def place_wager_helper(
 
         odds = get_outcome_odds(event_id, outcome)
         payout = calculate_payout(wager_amount, odds)
-        timestamp = datetime.now(timezone.utc).isoformat()
+        # timestamp = datetime.now(timezone.utc).isoformat()
+
+        formatted_odds = "+" + str(odds) if odds > 0 else str(odds)
+        formatted_payout = "{:.2f}".format(payout)
 
         user = venmo_client.user.search_for_users(query=venmo_username, username=True)[
             0
@@ -53,7 +57,7 @@ def place_wager_helper(
         request = venmo_client.payment.request_money(
             amount=wager_amount,
             target_user_id=venmo_id,
-            note=f"{outcome} (${odds}) - Payout: ${payout})",
+            note=f"{outcome} ({formatted_odds}) - Winning Payout: ${formatted_payout}",
         )
 
         # get the pending transaction id
@@ -61,16 +65,17 @@ def place_wager_helper(
         for pending in pending_txs:
             if (
                 pending.target.id == venmo_id
-                and pending.note == f"{outcome} (${odds}) - Payout: ${payout})",
+                and pending.note
+                == f"{outcome} ({formatted_odds}) - Winning Payout: ${formatted_payout}",
             ):
                 payment_id = pending.id
                 break
 
         data = {
-            "bet_amount": wager_amount,
+            "wager_amount": wager_amount,
             "event": event_id,
             "outcome": outcome,
-            "timestamp": timestamp,
+            "timestamp": int(time.time()),
             "venmo_id": venmo_id,
             "venmo_username": venmo_username,
             "payment_id": payment_id,

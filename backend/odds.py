@@ -1,20 +1,19 @@
 import time
 import threading
 from datetime import datetime, timezone
+
 from client import create_supabase_client
-import supabase
-import os
-from datetime import datetime, timezone
-import time
 
 client = create_supabase_client()
 
 
 def compute_odds():
-    event_data, _ = (
-        client.table("current_odds").select("event_id, outcome_a, outcome_b").execute()
+    event_data = (
+        client.table("current_odds")
+        .select("event_id, outcome_a, outcome_b")
+        .execute()
+        .data
     )
-    event_data = event_data[1]
 
     timestamp = datetime.now(timezone.utc).isoformat()
     records = []
@@ -38,8 +37,8 @@ def compute_odds():
             records += [record]
 
         print(f"Upserting records for event odds ...")
-        _, _ = client.table("current_odds").upsert(records).execute()
-        _, _ = client.table("historical_odds").upsert(records).execute()
+        client.table("current_odds").upsert(records).execute()
+        client.table("historical_odds").upsert(records).execute()
 
     except Exception as e:
         print("Error:", e)
@@ -56,26 +55,44 @@ def calculate_american_odds(event: int, max_bet: float = 10.0) -> float:
     (
         outcome_a_wagers_resolved_sum,
         outcome_b_wagers_resolved_sum,
-        outcome_a_bets_unresolved_sum,
-        outcome_b_bets_unresolved_sum,
+        outcome_a_wagers_unresolved_sum,
+        outcome_b_wagers_unresolved_sum,
     ) = check_amount_in_pools(event)
 
-    outcome_a_odds = round(
-        outcome_b_wagers_resolved_sum
-        / (outcome_a_wagers_resolved_sum + outcome_a_bets_unresolved_sum + max_bet)
+    INIT_AMOUNT = 100
+    SPREAD = (
+        0 if outcome_a_wagers_resolved_sum + outcome_b_wagers_resolved_sum < 100 else 5
+    )
+
+    outcome_a_odds = (
+        (INIT_AMOUNT + outcome_b_wagers_resolved_sum)
+        / (
+            INIT_AMOUNT
+            + outcome_a_wagers_resolved_sum
+            + outcome_a_wagers_unresolved_sum
+            + max_bet
+        )
         * 100
     )
 
-    outcome_b_odds = round(
-        outcome_a_wagers_resolved_sum
-        / (outcome_b_wagers_resolved_sum + outcome_b_bets_unresolved_sum + max_bet)
+    outcome_b_odds = (
+        (INIT_AMOUNT + outcome_a_wagers_resolved_sum)
+        / (
+            INIT_AMOUNT
+            + outcome_b_wagers_resolved_sum
+            + outcome_b_wagers_unresolved_sum
+            + max_bet
+        )
         * 100
     )
 
-    if outcome_a_odds < 100:
+    outcome_a_odds -= SPREAD
+    outcome_b_odds -= SPREAD
+
+    if outcome_a_odds > 0 and outcome_a_odds < 100:
         outcome_a_odds = int(-1.0 * (100.0 / outcome_a_odds) * 100.0)
 
-    if outcome_b_odds < 100:
+    if outcome_b_odds > 0 and outcome_b_odds < 100:
         outcome_b_odds = int(-1.0 * (100.0 / outcome_b_odds) * 100.0)
 
     return outcome_a_odds, outcome_b_odds
@@ -144,6 +161,7 @@ def get_sum_of_bets(table: str, event: int, outcome: str):
         .select("wager_amount")
         .eq("event", event)
         .eq("outcome", outcome)
+        .eq("paid", False if table == "pending_txns" else True)
         .eq("cancelled", False)
     )
 
@@ -153,7 +171,7 @@ def get_sum_of_bets(table: str, event: int, outcome: str):
     return total_sum
 
 
-def schedule_compute_odds(period=60):
+def schedule_compute_odds(period=5):
     while True:
         compute_odds()
         time.sleep(period)

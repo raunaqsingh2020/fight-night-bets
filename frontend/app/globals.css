@@ -125,6 +125,7 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 55px;
+  min-width: 110px;
   text-align: center;
   background-color: rgb(76, 194, 113);
   border-radius: 10px;
@@ -135,7 +136,9 @@ body {
 .submit_disabled {
   display: flex;
   align-items: center;
+  justify-content: center;
   min-height: 55px;
+  min-width: 110px;
   text-align: center;
   background-color: rgb(166, 166, 166);
   color: rgb(69, 69, 69);

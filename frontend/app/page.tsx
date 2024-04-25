@@ -24,7 +24,7 @@ export default function Home() {
       // setPreviousOdds(currentOdds);
       const { data: current_odds } = await supabase.from('current_odds').select()
       if (current_odds) {
-        setCurrentOdds(current_odds);
+        setCurrentOdds(current_odds.sort((a, b) => a.event_id - b.event_id));
         let newOutcomeToOddsMap = new Map();
         let newOutcomeToEventIdMap = new Map();
         for (const odd of current_odds) {
@@ -47,7 +47,7 @@ export default function Home() {
     const intervalId = setInterval(() => {
       // console.log("updating odds...");
       updateOdds();
-    }, 5000);
+    }, 1000);
 
     return () => clearInterval(intervalId);
   }, []);

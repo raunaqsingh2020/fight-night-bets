@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import { formatNumberWithSign } from '../utils/utils.js'
@@ -9,6 +9,8 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
 
     const [venmoUsername, setVenmoUsername] = useState();
     const [wagerAmount, setWagerAmount] = useState();
+    const [isReallyProcessing, setIsReallyProcessing] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const handleVenmoUsernameChange = (event: any) => {
         setVenmoUsername(event.target.value);
@@ -40,15 +42,28 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
     }
 
     const submitWager = async () => {
+        setIsReallyProcessing(true);
         try {
             let queryUrl = `http://localhost:8000/api/place_wager?event_id=${selected_event_id}&outcome=${selected_outcome}&venmo_username=${venmoUsername}&wager_amount=${wagerAmount}`;
             const response = await axios.get(queryUrl);
+            setIsReallyProcessing(false);
             return response.data;
         } catch (error) {
             console.error("Error:", error);
+            setIsReallyProcessing(false);
             return {};
         }
     };
+
+    useEffect(() => {
+        if (isReallyProcessing == true) {
+            setIsProcessing(true);
+        } else {
+            setTimeout(() => {
+                setIsProcessing(false);
+            }, 2500);
+        }
+    }, [isReallyProcessing]);
 
     return (
         <div className="cart">
@@ -79,15 +94,24 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
                 <div
                     className={isValidVenmoUsername(venmoUsername) && isValidWagerAmount(wagerAmount) ? `submit_enabled` : `submit_disabled`}
                     onClick={() => {
-                        if (isValidVenmoUsername(venmoUsername) && isValidWagerAmount(wagerAmount)) {
+                        if (!isProcessing && isValidVenmoUsername(venmoUsername) && isValidWagerAmount(wagerAmount)) {
                             submitWager();
                         }
                     }}
                 >
-                    <p className="text-md font-semibold">
-                        Submit
-                    </p>
-                    {isValidVenmoUsername(venmoUsername) && isValidWagerAmount(wagerAmount) &&
+                    {isProcessing &&
+                        <div className="mt-[6px]">
+                            <div className="h-5 w-5 border-t-transparent border-solid animate-spin rounded-full border-white border-4"></div>
+                        </div>
+                    }
+
+                    {!isProcessing &&
+                        < p className="text-md font-semibold">
+                            Submit
+                        </p>
+                    }
+
+                    {!isProcessing && isValidVenmoUsername(venmoUsername) && isValidWagerAmount(wagerAmount) &&
                         <p className="text-xs">
                             TO WIN: ${calculatePayout(wagerAmount, odds)}
                         </p>
