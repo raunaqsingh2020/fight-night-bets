@@ -70,11 +70,11 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
         const formattedOdds = formatNumberWithSign(upToDateOdds);
 
         const venmo_username = "arham_habibi"; // TODO
-        let comment = `${selected_outcome} (${formattedOdds}) - Winning Payout: ${payout}`;
+        let comment = `${selected_outcome} (${formattedOdds}) - Winning Payout: $${payout}`;
 
         comment += `
         
-        * Note: Odds subject to line movement, submit quickly! *`
+        **Note: Odds subject to line movement, submit quickly!**`
 
         let link = isMobile ? "venmo://paycharge?" : "https://account.venmo.com/pay?";
         link += `txn=pay&recipients=${venmo_username}&note=${comment}&amount=${wagerAmount}`;
