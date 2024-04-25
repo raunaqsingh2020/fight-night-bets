@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { isMobile } from 'react-device-detect';
 
 import { formatNumberWithSign } from '../utils/utils.js'
 
@@ -7,14 +8,14 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
     // console.log("prev: " + prev_odds_a);
     // console.log("curr: " + curr_odds_a);
 
-    const [venmoUsername, setVenmoUsername] = useState();
+    // const [venmoUsername, setVenmoUsername] = useState();
     const [wagerAmount, setWagerAmount] = useState();
     const [isReallyProcessing, setIsReallyProcessing] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const handleVenmoUsernameChange = (event: any) => {
-        setVenmoUsername(event.target.value);
-    };
+    // const handleVenmoUsernameChange = (event: any) => {
+    //     setVenmoUsername(event.target.value);
+    // };
 
     const handleWagerAmountChange = (event: any) => {
         setWagerAmount(event.target.value);
@@ -44,8 +45,15 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
     const submitWager = async () => {
         setIsReallyProcessing(true);
         try {
-            let queryUrl = `http://localhost:8000/api/place_wager?event_id=${selected_event_id}&outcome=${selected_outcome}&venmo_username=${venmoUsername}&wager_amount=${wagerAmount}`;
+            console.log(selected_outcome);
+            let queryUrl = `http://localhost:8000/api/place_wager?event_id=${selected_event_id}&outcome=${selected_outcome}&wager_amount=${wagerAmount}&is_mobile=${isMobile}`;
             const response = await axios.get(queryUrl);
+            // console.log(response.data)
+
+            var win = window.open(response.data, '_blank');
+            if (win)
+                win.focus();
+
             setIsReallyProcessing(false);
             return response.data;
         } catch (error) {
@@ -61,7 +69,7 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
         } else {
             setTimeout(() => {
                 setIsProcessing(false);
-            }, 2500);
+            }, 1000);
         }
     }, [isReallyProcessing]);
 
@@ -76,25 +84,25 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
                 <div className="" style={{
                     minHeight: 55,
                 }}>
-                    <input
+                    {/* <input
                         type="text"
                         value={venmoUsername}
                         onChange={handleVenmoUsernameChange}
                         placeholder="Venmo Username"
                         className="cart_input"
-                    />
+                    /> */}
                     <input
                         type="text"
                         value={wagerAmount}
                         onChange={handleWagerAmountChange}
                         placeholder="Wager Amount ($)"
-                        className="cart_input ml-4"
+                        className="cart_input"
                     />
                 </div>
                 <div
-                    className={isValidVenmoUsername(venmoUsername) && isValidWagerAmount(wagerAmount) ? `submit_enabled` : `submit_disabled`}
+                    className={isValidWagerAmount(wagerAmount) ? `submit_enabled` : `submit_disabled`}
                     onClick={() => {
-                        if (!isProcessing && isValidVenmoUsername(venmoUsername) && isValidWagerAmount(wagerAmount)) {
+                        if (!isProcessing && isValidWagerAmount(wagerAmount)) {
                             submitWager();
                         }
                     }}
@@ -111,7 +119,7 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
                         </p>
                     }
 
-                    {!isProcessing && isValidVenmoUsername(venmoUsername) && isValidWagerAmount(wagerAmount) &&
+                    {!isProcessing && isValidWagerAmount(wagerAmount) &&
                         <p className="text-xs">
                             TO WIN: ${calculatePayout(wagerAmount, odds)}
                         </p>

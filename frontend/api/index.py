@@ -30,6 +30,6 @@ app = FastAPI(middleware=middleware)
     # response_model=,
 )
 async def place_wager(
-    event_id: int, outcome: str, venmo_username: str, wager_amount: float
+    event_id: int, outcome: str, wager_amount: float, is_mobile: bool
 ):
-    return place_wager_helper(event_id, outcome, venmo_username, wager_amount)
+    return place_wager_helper(event_id, outcome, wager_amount, is_mobile)

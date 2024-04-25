@@ -55,8 +55,8 @@ def calculate_american_odds(event: int, max_bet: float = 10.0) -> float:
     (
         outcome_a_wagers_resolved_sum,
         outcome_b_wagers_resolved_sum,
-        outcome_a_wagers_unresolved_sum,
-        outcome_b_wagers_unresolved_sum,
+        # outcome_a_wagers_unresolved_sum,
+        # outcome_b_wagers_unresolved_sum,
     ) = check_amount_in_pools(event)
 
     INIT_AMOUNT = 100
@@ -69,7 +69,7 @@ def calculate_american_odds(event: int, max_bet: float = 10.0) -> float:
         / (
             INIT_AMOUNT
             + outcome_a_wagers_resolved_sum
-            + outcome_a_wagers_unresolved_sum
+            # + outcome_a_wagers_unresolved_sum
             + max_bet
         )
         * 100
@@ -80,7 +80,7 @@ def calculate_american_odds(event: int, max_bet: float = 10.0) -> float:
         / (
             INIT_AMOUNT
             + outcome_b_wagers_resolved_sum
-            + outcome_b_wagers_unresolved_sum
+            # + outcome_b_wagers_unresolved_sum
             + max_bet
         )
         * 100
@@ -125,23 +125,23 @@ def check_amount_in_pools(event: int) -> tuple[int]:
         outcome=outcome_b,
     )
 
-    outcome_a_wagers_unresolved_sum = get_sum_of_bets(
-        table="pending_txns",
-        event=event,
-        outcome=outcome_a,
-    )
+    # outcome_a_wagers_unresolved_sum = get_sum_of_bets(
+    #     table="pending_txns",
+    #     event=event,
+    #     outcome=outcome_a,
+    # )
 
-    outcome_b_wagers_unresolved_sum = get_sum_of_bets(
-        table="pending_txns",
-        event=event,
-        outcome=outcome_b,
-    )
+    # outcome_b_wagers_unresolved_sum = get_sum_of_bets(
+    #     table="pending_txns",
+    #     event=event,
+    #     outcome=outcome_b,
+    # )
 
     return (
         outcome_a_wagers_resolved_sum,
         outcome_b_wagers_resolved_sum,
-        outcome_a_wagers_unresolved_sum,
-        outcome_b_wagers_unresolved_sum,
+        # outcome_a_wagers_unresolved_sum,
+        # outcome_b_wagers_unresolved_sum,
     )
 
 
@@ -161,8 +161,8 @@ def get_sum_of_bets(table: str, event: int, outcome: str):
         .select("wager_amount")
         .eq("event", event)
         .eq("outcome", outcome)
-        .eq("paid", False if table == "pending_txns" else True)
         .eq("cancelled", False)
+        # .eq("paid", False if table == "pending_txns" else True)
     )
 
     result = query.execute()
