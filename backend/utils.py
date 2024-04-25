@@ -133,6 +133,7 @@ def check_paid_bet_requests():
     # get all pending transactions in venmo
     pending_txns_venmo = venmo_client.payment.get_charge_payments()
     paid = False
+    cancelled = False
     for db_txn in pending_txns_db:
         # check if the transaction has been paid
         for venmo_txn in pending_txns_venmo:
@@ -142,7 +143,9 @@ def check_paid_bet_requests():
                 print(venmo_txn)
                 print(paid)
                 paid = venmo_txn.status == venmo_api.PaymentStatus.SETTLED # check if the txn has settled
+                cancelled = venmo_txn.status == venmo_api.PaymentStatus.CANCELLED
                 print(paid)
+                print(cancelled)
                 break
         if paid:
             # update the DB to reflect that the transaction has been paid
@@ -150,7 +153,11 @@ def check_paid_bet_requests():
             db_txn['paid'] = True
             supabase_client.table('completed_txns').upsert(db_txn).execute()
             continue
-        elif time.time() - db_txn['timestamp'] > 120:
+        elif cancelled:
+            # update the DB to reflect that the transaction has been cancelled
+            supabase_client.table('pending_txns').update({'cancelled': True}).eq('payment_id', db_txn['payment_id']).execute()
+            continue
+        elif time.time() - db_txn['timestamp'] > 120: # if the payment has been outstanding for more than 2 mins
             print("Cancelling")
             # record in the database that the transaction has been cancelled
             supabase_client.table('pending_txns').update({'cancelled': True}).eq('payment_id', db_txn['payment_id']).execute()
