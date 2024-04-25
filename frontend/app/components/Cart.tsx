@@ -8,6 +8,8 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
     // console.log("prev: " + prev_odds_a);
     // console.log("curr: " + curr_odds_a);
 
+    const [test, setTest] = useState("");
+
     // const [venmoUsername, setVenmoUsername] = useState();
     const [wagerAmount, setWagerAmount] = useState();
     const [isReallyProcessing, setIsReallyProcessing] = useState(false);
@@ -51,6 +53,7 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
             // console.log(response.data)
 
             if (isMobile) {
+                setTest(response.data);
                 window.location.href = response.data;
             } else {
                 var win = window.open(response.data, '_blank');
@@ -79,6 +82,7 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
 
     return (
         <div className="cart">
+            <p>{test}</p>
             <p className="text-[#888] text-xs mb-1">MAX WAGER: $10</p>
             <div className="flex justify-between font-semibold">
                 <p>{selected_outcome}</p>
