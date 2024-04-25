@@ -109,7 +109,7 @@ export default function Home() {
               <p><b>Place a bet:</b><br />Click the boxer that you want to bet on. Huntsman/M&T winner will resolve to whichever side wins 3+/5 fights.
                 Enter your wager amount. Minimum $1, Maximum $10. You will be redirected to Venmo, with a preset comment and transaction.
                 Do not edit the comment (or your wager will not go through). Odds are live and so they may change if you wait to submit your payment!
-                <br />
+                <br /><br />
                 Winners of each fight will be announced by @PennBoxingClub on IG. Payouts will happen shortly thereafter.
               </p>
             </div>
@@ -131,20 +131,23 @@ export default function Home() {
                 Since we take the opposite of every bet you place, there is a good chance we lose money across the 6 markets after everything is said and done.
                 We made this in one night lol. Stuff will probably break. Please do not try to manipulate the odds or break this. If we see something wrong, we reserve the right to refund you.
                 If you see something wrong or have questions, please DM us on IG (@PennBoxingClub).
+                <br /><br />
                 For some background, the math behind our odds, and disclaimers, please read <a style={{ color: "#ffb3b2" }} href="https://juanbug.substack.com/p/huntsman-x-m-and-t-fight-night-fundraiser" target="_blank">this</a>.
               </p>
             </div>
           </div>
         </section>
 
-        <div className="h-[200px]"></div>
-
+        <div className="h-[50px]"></div>
         {selectedOutcome && outcomeToOddsMap && outcomeToEventIdMap &&
-          <Cart
-            selected_event_id={outcomeToEventIdMap.get(selectedOutcome)}
-            selected_outcome={selectedOutcome}
-            odds={outcomeToOddsMap.get(selectedOutcome)}
-          />
+          <>
+            <div className="h-[130px]"></div>
+            <Cart
+              selected_event_id={outcomeToEventIdMap.get(selectedOutcome)}
+              selected_outcome={selectedOutcome}
+              odds={outcomeToOddsMap.get(selectedOutcome)}
+            />
+          </>
         }
       </div>
     </div>
