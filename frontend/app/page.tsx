@@ -108,7 +108,7 @@ export default function Home() {
             <div className="tab__content">
               <p><b>Place a bet:</b><br />Click the boxer that you want to bet on. Huntsman/M&T winner will resolve to whichever side wins 3+/5 fights.
                 Enter your wager amount. Minimum $1, Maximum $10. You will be redirected to Venmo, with a preset comment and transaction.
-                Don't edit the comment (or your wager will not go through). Odds are live and so they may change if you wait to submit your payment!
+                Do not edit the comment (or your wager will not go through). Odds are live and so they may change if you wait to submit your payment!
                 <br />
                 Winners of each fight will be announced by @PennBoxingClub on IG. Payouts will happen shortly thereafter.
               </p>
