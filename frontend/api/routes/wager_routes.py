@@ -92,10 +92,10 @@ def place_wager_helper(
 
         venmo_username = "arham_habibi"  # TODO
 
-        comment = f"{outcome} ({formatted_odds}) - Winning Payout: ${formatted_payout}"
+        comment = f"{outcome} ({formatted_odds}) - For: ${formatted_payout}"
         comment += """
 
-        *Note: Odds subject to line movement, submit quickly!*"""
+        *Note: Subject to movement, submit quickly!*"""
 
         link = "venmo://paycharge?" if is_mobile else "https://account.venmo.com/pay?"
         link += f"txn=pay&recipients={venmo_username}&note={comment}&amount={str(wager_amount)}"
