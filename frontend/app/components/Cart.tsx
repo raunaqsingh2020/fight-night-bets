@@ -50,9 +50,13 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
             const response = await axios.get(queryUrl);
             // console.log(response.data)
 
-            var win = window.open(response.data, '_blank');
-            if (win)
-                win.focus();
+            if (isMobile) {
+                window.location.href = response.data;
+            } else {
+                var win = window.open(response.data, '_blank');
+                if (win)
+                    win.focus();
+            }
 
             setIsReallyProcessing(false);
             return response.data;
