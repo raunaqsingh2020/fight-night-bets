@@ -53,7 +53,7 @@ def place_wager_helper(
         request = venmo_client.payment.request_money(
             amount=wager_amount,
             target_user_id=venmo_id,
-            note=f"Outcome: {outcome}; amount: {wager_amount}; timestamp: {timestamp}; potential_payout: {payout}",
+            note=f"{outcome} (${odds}) - Payout: ${payout})",
         )
 
         # get the pending transaction id
@@ -61,8 +61,7 @@ def place_wager_helper(
         for pending in pending_txs:
             if (
                 pending.target.id == venmo_id
-                and pending.note
-                == f"Outcome: {outcome}; amount: {wager_amount}; timestamp: {timestamp}; potential_payout: {payout}",
+                and pending.note == f"{outcome} (${odds}) - Payout: ${payout})",
             ):
                 payment_id = pending.id
                 break
