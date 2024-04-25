@@ -64,7 +64,7 @@ export default function Home() {
         <NavBar />
         <div style={{ padding: 16 }}>
           <div className="header">
-            <p style={{ fontSize: 28, fontWeight: 600 }}>HUNTS VS M&T</p>
+            <p style={{ fontSize: 28, fontWeight: 600 }}>HUNTS VS MT</p>
             <p className="title" style={{ fontWeight: 600 }}>FIGHT NIGHT</p>
             <p style={{ fontSize: 14, opacity: 0.8, fontWeight: 400 }}>FIGHT FOR THE GREATEST</p>
             <p style={{ fontSize: 14, opacity: 0.8, fontWeight: 400 }}>26 April • 7-8 PM</p>
@@ -81,7 +81,7 @@ export default function Home() {
       <NavBar />
       <div style={{ padding: 16 }}>
         <div className="header">
-          <p style={{ fontSize: 28, fontWeight: 600 }}>HUNTS VS M&T</p>
+          <p style={{ fontSize: 28, fontWeight: 600 }}>HUNTS VS MT</p>
           <p className="title" style={{ fontWeight: 600 }}>FIGHT NIGHT</p>
           <p style={{ fontSize: 14, opacity: 0.8, fontWeight: 400 }}>FIGHT FOR THE GREATEST</p>
           <p style={{ fontSize: 14, opacity: 0.8, fontWeight: 400 }}>26 April • 7-8 PM</p>
@@ -109,11 +109,11 @@ export default function Home() {
             <input type="checkbox" name="accordion-1" id="cb1" />
             <label htmlFor="cb1" className="tab__label">How it Works</label>
             <div className="tab__content">
-              <p><b>Place a bet:</b><br />Click the boxer that you want to bet on. Huntsman/M&T winner will resolve to whichever side wins 3 or more out of 5 fights. Enter your wager amount. Minimum $1, Maximum $10. You will be redirected to Venmo, with a preset comment and transaction. Do not edit the comment (or your wager will not go through properly). Odds are live and so they may change if you wait to submit your payment!
+              <p><b>Place a bet:</b><br />Click the boxer that you want to bet on. Hunts/MT winner will resolve to whichever side wins 3 or more out of 5 fights. Enter your wager amount. Minimum $1, Maximum $10. You will be redirected to Venmo, with a preset comment and transaction. Do not edit the comment (or your wager will not go through properly). Odds are live and so they may change if you wait to submit your payment!
                 <br /><br />
-                Huntsman/M&T winner will resolve to whichever side wins 3 or more out of 5 fights.
-                Huntsman Fighters: Mustafa, James, Mo, Arpan, Paul.
-                M&T Fighters: Joaquin, Albert, Marco, Rishabh, Seth.
+                Hunts/MT winner will resolve to whichever side wins 3 or more out of 5 fights.
+                Hunts Fighters: Mustafa, James, Mo, Arpan, Paul.
+                MT Fighters: Joaquin, Albert, Marco, Rishabh, Seth.
                 <br /><br />
                 Winners of each fight will be announced by @PennBoxingClub on IG. Payouts will happen shortly thereafter. Net proceeds will be donated to Charity. Follow the IG for the latest updates!
                 <br /><br />
