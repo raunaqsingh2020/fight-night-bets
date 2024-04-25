@@ -70,7 +70,7 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
         const formattedOdds = formatNumberWithSign(upToDateOdds);
 
         const venmo_username = "arham_habibi"; // TODO
-        let comment = `${selected_outcome} (${formattedOdds}) - Winning Payout: $${payout}`;
+        let comment = `${selected_outcome} (${formattedOdds}) - Winning Payout: ${payout.toFixed(2)}`;
 
         comment += `
         
