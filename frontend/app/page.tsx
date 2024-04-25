@@ -106,7 +106,7 @@ export default function Home() {
             <input type="checkbox" name="accordion-1" id="cb1" />
             <label htmlFor="cb1" className="tab__label">How it works</label>
             <div className="tab__content">
-              <p><b>Place a bet:</b><br />Click the boxer that you want to bet on. Huntsman/M&T winner will resolve to whichever side wins 3 or more out of 5 fights.
+              <p><b>Place a bet:</b><br />Click the boxer that you want to bet on. Huntsman/M&T winner will resolve to whichever side wins 3 or more out of 5 fights. Odds will shift algorithmically throughout the day.
                 Enter your wager amount. Minimum $1, Maximum $10. You will be redirected to Venmo, with a preset comment and transaction.
                 Do not edit the comment (or your wager will not go through). Odds are live and so they may change if you wait to submit your payment!
                 <br /><br />

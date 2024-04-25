@@ -45,6 +45,19 @@ venmo_client = venmo_api.Client(access_token=venmo_token)
 #     .data
 # )
 
+
+client = create_supabase_client()
+venmo_client = venmo_api.Client(access_token=venmo_token)
+
+# pending_txns_db = (
+#     client.table("pending_txns")
+#     .select("*")
+#     .eq("paid", False)
+#     .eq("cancelled", False)
+#     .execute()
+#     .data
+# )
+
 try:
     timestamp = datetime.now(timezone.utc).isoformat()
     event_data = client.table("current_odds").select("*").execute().data
@@ -86,6 +99,9 @@ try:
     while transactions:
         records = []
         for txn in transactions:
+            if txn.date_completed < 1714058000:
+                transactions=None
+                break
             txn_id = txn.id
             txn_comment = txn.note
             actor = txn.actor
@@ -123,7 +139,7 @@ try:
                 "event": txn_event_id,
                 "paid": True if txn_status and payment_type else False,
                 "cancelled": True if not payment_type and txn_status else False,
-                "payout": calculate_payout(txn_wager_amount, txn_odds),
+                "payout": 2 ,# calculate_payout(txn_wager_amount, txn_odds),
                 "outcome": txn_outcome,
                 "timestamp": timestamp,
                 "wager_amount": txn_wager_amount,
