@@ -164,7 +164,7 @@ body {
 }
 
 .tab input:checked~.tab__content {
-  max-height: 25rem;
+  max-height: 35rem;
 }
 
 /* Visual styles */

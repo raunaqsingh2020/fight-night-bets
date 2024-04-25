@@ -104,22 +104,22 @@ export default function Home() {
         <section className="accordion">
           <div className="tab">
             <input type="checkbox" name="accordion-1" id="cb1" />
-            <label htmlFor="cb1" className="tab__label">How it works</label>
+            <label htmlFor="cb1" className="tab__label">How it Works</label>
             <div className="tab__content">
-              <p><b>Place a bet:</b><br />Click the boxer that you want to bet on. Huntsman/M&T winner will resolve to whichever side wins 3 or more out of 5 fights. Odds will shift algorithmically throughout the day.
-                Enter your wager amount. Minimum $1, Maximum $10. You will be redirected to Venmo, with a preset comment and transaction.
-                Do not edit the comment (or your wager will not go through). Odds are live and so they may change if you wait to submit your payment!
+              <p><b>Place a bet:</b><br />Click the boxer that you want to bet on. Huntsman/M&T winner will resolve to whichever side wins 3 or more out of 5 fights. Enter your wager amount. Minimum $1, Maximum $10. You will be redirected to Venmo, with a preset comment and transaction. Do not edit the comment (or your wager will not go through properly). Odds are live and so they may change if you wait to submit your payment!
                 <br /><br />
-                Winners of each fight will be announced by @PennBoxingClub on IG. Payouts will happen shortly thereafter.
+                Winners of each fight will be announced by @PennBoxingClub on IG. Payouts will happen shortly thereafter. Net proceeds will be donated to Charity. Follow the IG for the latest updates!
+                <br /><br />
+                Note: You will need to be logged in to your Venmo app if on mobile, or signed in on Desktop. If Venmo does not open up after clicking Submit, try another browser or switch to mobile / PC.
               </p>
             </div>
           </div>
 
           <div className="tab">
             <input type="checkbox" name="accordion-1" id="cb2" />
-            <label htmlFor="cb2" className="tab__label">Charity?</label>
+            <label htmlFor="cb2" className="tab__label">Fundraiser</label>
             <div className="tab__content">
-              <p>Though we do not expect to make profit, any profit potentially made will be given away. All profits at the end will be split evenly to the 5 winners and donated under their name to a charity of their choice.</p>
+              <p>All profits at the end will be donated to charity! We will not be taking a cut.</p>
             </div>
           </div>
 
@@ -128,11 +128,12 @@ export default function Home() {
             <label htmlFor="cb3" className="tab__label">More</label>
             <div className="tab__content">
               <p>
-                Since we take the opposite of every bet you place, there is a good chance we lose money across the 6 markets after everything is said and done.
-                We made this in one night lol. Stuff will probably break. Please do not try to manipulate the odds or break this. If we see something wrong, we reserve the right to refund you.
-                If you see something wrong or have questions, please DM us on IG (@PennBoxingClub).
+                Since we take the opposite of every bet you place, there is a good chance we lose money across the 6 markets after everything is said and done. It is ok, we had fun.
                 <br /><br />
                 For some background, the math behind our odds, and disclaimers, please read <a style={{ color: "#ffb3b2" }} href="https://juanbug.substack.com/p/huntsman-x-m-and-t-fight-night-fundraiser" target="_blank">this</a>.
+                <br /><br />
+                Note: We made this in one night lol. Stuff will probably break. Please do not try to manipulate the odds or break this.
+                If we see something wrong, we reserve the right to refund you. If you see something wrong or have questions, please DM us on IG (@PennBoxingClub).
               </p>
             </div>
           </div>
