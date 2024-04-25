@@ -70,9 +70,14 @@ def log_txns():
             user_id=2612203773493248301,
             limit=30,  # TODO: hard coded as Arham, potentially change
         )
-        while transactions:
+
+        finished = False
+        while transactions and not finished:
             records = []
             for txn in transactions:
+                if int(txn.date_completed) < 1714064591:
+                    finished = True
+                    break
                 txn_id = txn.id
                 txn_comment = txn.note
                 actor = txn.actor
@@ -119,48 +124,11 @@ def log_txns():
 
                 records += [record]
 
-            print(f"Upserting txns...")
+            if len(records) > 0:
+                print("Upserting txns...")
+                client.table("completed_txns").upsert(records).execute()
+
             transactions = transactions.get_next_page()
-            client.table("completed_txns").upsert(records).execute()
-
-            # pending_txns_venmo = venmo_client.payment.get_charge_payments()
-            # pending_txns_venmo = {
-            #     str(venmo_txn.id): venmo_txn for venmo_txn in pending_txns_venmo
-            # }
-
-            # for db_txn in pending_txns_db:
-            #     # check if the transaction has been paid
-            #     paid = False
-            #     cancelled = False
-            #     if str(db_txn["payment_id"]) in pending_txns_venmo:
-            #         venmo_txn = pending_txns_venmo[str(db_txn["payment_id"])]
-            #         paid = venmo_txn.status == venmo_api.PaymentStatus.SETTLED
-            #         cancelled = venmo_txn.status == venmo_api.PaymentStatus.CANCELLED
-
-            #     if paid:
-            #         # update the DB to reflect that the transaction has been paid
-            #         client.table("pending_txns").update({"paid": True}).eq(
-            #             "payment_id", db_txn["payment_id"]
-            #         ).execute()
-            #         db_txn["paid"] = True
-            #         client.table("completed_txns").upsert(db_txn).execute()
-            #         continue
-            #     elif cancelled:
-            #         # update the DB to reflect that the transaction has been cancelled
-            #         client.table("pending_txns").update({"cancelled": True}).eq(
-            #             "payment_id", db_txn["payment_id"]
-            #         ).execute()
-            #         continue
-            #     elif time.time() - db_txn["timestamp"] > 30:
-            #         print("Cancelling " + str(db_txn["payment_id"]) + "...")
-            #         client.table("pending_txns").update({"cancelled": True}).eq(
-            #             "payment_id", db_txn["payment_id"]
-            #         ).execute()
-
-            #         try:
-            #             venmo_client.payment.cancel_payment(payment_id=db_txn["payment_id"])
-            #         except Exception as e:
-            #             print("Error:", e)
 
     except Exception as e:
         print("Error:", e)
