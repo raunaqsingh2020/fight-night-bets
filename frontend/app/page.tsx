@@ -117,7 +117,7 @@ export default function Home() {
                 <br /><br />
                 Winners of each fight will be announced by @PennBoxingClub on IG. Payouts will happen shortly thereafter. Net proceeds will be donated to Charity. Follow the IG for the latest updates!
                 <br /><br />
-                Note: You will need to be logged in to your Venmo app if on mobile, or signed in on Desktop. If Venmo does not open up after clicking Submit, try another browser or switch to mobile / PC.
+                <b>Note: You will need to be logged in to your Venmo app if on mobile, or signed in on Desktop. If Venmo does not open up after clicking Submit, try another browser or switch to mobile / PC.</b>
               </p>
             </div>
           </div>
