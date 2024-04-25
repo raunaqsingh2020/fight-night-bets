@@ -51,7 +51,7 @@ def log_txns():
             .data
         )
         cancelled_txn_payment_ids = set(
-            [cancelled_txn["payment_id"] for cancelled_txn in cancelled_txn_data]
+            [str(cancelled_txn["payment_id"]) for cancelled_txn in cancelled_txn_data]
         )
 
         paid_txn_data = (
@@ -63,7 +63,7 @@ def log_txns():
         )
 
         paid_txn_payment_ids = set(
-            [paid_txn["payment_id"] for paid_txn in paid_txn_data]
+            [str(paid_txn["payment_id"]) for paid_txn in paid_txn_data]
         )
 
         transactions = venmo_client.user.get_user_transactions(
@@ -73,10 +73,6 @@ def log_txns():
         while transactions:
             records = []
             for txn in transactions:
-                if txn.date_completed < 1714058000:
-                    transactions = None
-                    break
-
                 txn_id = txn.id
                 txn_comment = txn.note
                 actor = txn.actor
@@ -98,10 +94,10 @@ def log_txns():
                     # print("Invalid txn: " + txn)
                     continue
 
-                if txn_id in cancelled_txn_payment_ids:
+                if str(txn_id) in cancelled_txn_payment_ids:
                     continue
 
-                if txn_id in paid_txn_payment_ids:
+                if str(txn_id) in paid_txn_payment_ids:
                     continue
 
                 txn_event_id = m_outcome_to_event_id[txn_outcome]
