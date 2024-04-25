@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { supabase } from '../utils/supabase'
+
 import { isMobile } from 'react-device-detect';
 
 import { formatNumberWithSign } from '../utils/utils.js'
@@ -7,8 +9,6 @@ import { formatNumberWithSign } from '../utils/utils.js'
 export default function Cart({ selected_event_id, selected_outcome, odds }: any) {
     // console.log("prev: " + prev_odds_a);
     // console.log("curr: " + curr_odds_a);
-
-    const [test, setTest] = useState("");
 
     // const [venmoUsername, setVenmoUsername] = useState();
     const [wagerAmount, setWagerAmount] = useState();
@@ -44,30 +44,66 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
         return Math.abs(payout).toFixed(2);
     }
 
+    async function refetchSelectedOdd() {
+        try {
+            const { data: current_odds } = await supabase.from('current_odds').select().eq("event_id", selected_event_id);
+            if (current_odds) {
+                const outcome_odds = selected_outcome == current_odds[0].outcome_a ? current_odds[0].odds_a :
+                    selected_outcome == current_odds[0].outcome_b ? current_odds[0].odds_b :
+                        null;
+                return outcome_odds;
+            }
+        } catch {
+            return null;
+        }
+
+        return null;
+    }
+
+    async function getVenmoLink(isMobile: boolean) {
+        if (!wagerAmount || wagerAmount < 1 || wagerAmount > 10)
+            return null;
+
+        const upToDateOdds = await refetchSelectedOdd();
+        const payout = parseFloat(wagerAmount) + parseFloat(calculatePayout(wagerAmount, upToDateOdds));
+
+        const formattedOdds = formatNumberWithSign(upToDateOdds);
+
+        const venmo_username = "arham_habibi"; // TODO
+        let comment = `${selected_outcome} (${formattedOdds}) - Winning Payout: ${payout}`;
+
+        comment += `
+        
+        * Note: Odds subject to line movement, submit quickly! *`
+
+        let link = isMobile ? "venmo://paycharge?" : "https://account.venmo.com/pay?";
+        link += `txn=pay&recipients=${venmo_username}&note=${comment}&amount=${wagerAmount}`;
+
+        return link
+    }
+
     const submitWager = async () => {
         setIsReallyProcessing(true);
         try {
-            console.log(selected_outcome);
-            let queryUrl = `http://localhost:8000/api/place_wager?event_id=${selected_event_id}&outcome=${selected_outcome}&wager_amount=${wagerAmount}&is_mobile=${isMobile}`;
-            const response = await axios.get(queryUrl);
+            // let queryUrl = `http://localhost:8000/api/place_wager?event_id=${selected_event_id}&outcome=${selected_outcome}&wager_amount=${wagerAmount}&is_mobile=${isMobile}`;
+            // const response = await axios.get(queryUrl);
             // console.log(response.data)
 
-            if (isMobile) {
-                setTest("mobile!: " + response.data);
-                window.location.href = response.data;
-            } else {
-                setTest(response.data);
-                var win = window.open(response.data, '_blank');
+            // if (isMobile) {
+            //     window.location.href = response.data;
+            // } else {
+
+            const venmoLink: string | null = await getVenmoLink(isMobile);
+            if (venmoLink) {
+                var win = window.open(venmoLink, '_blank');
                 if (win)
                     win.focus();
             }
 
             setIsReallyProcessing(false);
-            return response.data;
         } catch (error) {
             console.error("Error:", error);
             setIsReallyProcessing(false);
-            return {};
         }
     };
 
@@ -83,7 +119,6 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
 
     return (
         <div className="cart">
-            <p className="text-[#888] text-xs mb-1">{test}</p>
             <p className="text-[#888] text-xs mb-1">MAX WAGER: $10</p>
             <div className="flex justify-between font-semibold">
                 <p>{selected_outcome}</p>
