@@ -53,9 +53,10 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
             // console.log(response.data)
 
             if (isMobile) {
-                setTest(response.data);
+                setTest("mobile!: " + response.data);
                 window.location.href = response.data;
             } else {
+                setTest(response.data);
                 var win = window.open(response.data, '_blank');
                 if (win)
                     win.focus();
@@ -82,7 +83,7 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
 
     return (
         <div className="cart">
-            <p>{test}</p>
+            <p className="text-[#888] text-xs mb-1">{test}</p>
             <p className="text-[#888] text-xs mb-1">MAX WAGER: $10</p>
             <div className="flex justify-between font-semibold">
                 <p>{selected_outcome}</p>
