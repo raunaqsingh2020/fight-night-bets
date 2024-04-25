@@ -1,0 +1,2 @@
+url = "https://grvhcyivfpbedachedey.supabase.co"
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdydmhjeWl2ZnBiZWRhY2hlZGV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTM4NTM4MDQsImV4cCI6MjAyOTQyOTgwNH0.v_BqhRb0RvcVx5NdmvaVyiHeIIP6wEVsRM5MIFjl5_0"
