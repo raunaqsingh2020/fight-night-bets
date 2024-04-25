@@ -121,7 +121,7 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
 
     return (
         <div className="cart">
-            <p className="text-[#888] text-xs mb-1">MAX WAGER: $10</p>
+            <p className="text-[#888] text-xs mb-1">MIN/MAX WAGER: $1-10</p>
             <div className="flex justify-between font-semibold">
                 <p>{selected_outcome}</p>
                 <p>{formatNumberWithSign(odds)}</p>
