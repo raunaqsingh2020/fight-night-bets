@@ -54,14 +54,32 @@ def log_txns():
             [cancelled_txn["payment_id"] for cancelled_txn in cancelled_txn_data]
         )
 
+        paid_txn_data = (
+            client.table("completed_txns")
+            .select("payment_id")
+            .eq("paid", True)
+            .execute()
+            .data
+        )
+        
+        paid_txn_payment_ids = set(
+            [paid_txn["payment_id"] for paid_txn in paid_txn_data]
+        )
+
         transactions = venmo_client.user.get_user_transactions(
-            user_id="2824532226211840202"  # TODO
+            user_id=2612203773493248301 # hard coded as ARHAM, potentially change
         )
         while transactions:
             records = []
             for txn in transactions:
                 txn_id = txn.id
                 txn_comment = txn.note
+                actor = txn.actor
+                venmo_id = actor.id
+                venmo_username = actor.username
+                txn_status = txn.status=="settled"
+                payment_type = txn.payment_type=='pay'
+                txn_wager_amount = txn.amount  
 
                 if (
                     txn_comment.find("Odds subject to line movement") == -1
@@ -78,18 +96,19 @@ def log_txns():
                 if txn_id in cancelled_txn_payment_ids:
                     continue
 
+                if txn_id in paid_txn_payment_ids:
+                    continue
+
                 txn_event_id = m_outcome_to_event_id[txn_outcome]
                 txn_odds = int(m_outcome_to_odds[txn_outcome])
 
-                txn_wager_amount = 10  # TODO
-
                 record = {
-                    "payment_id": 0,
-                    "venmo_id": 0,
-                    "venmo_username": txn_id,
+                    "payment_id": txn_id,
+                    "venmo_id": venmo_id,
+                    "venmo_username": venmo_username,
                     "event": txn_event_id,
-                    "paid": False,
-                    "cancelled": False,
+                    "paid": False if txn_status and payment_type else False,
+                    "cancelled": True if not payment_type and txn_status else False,
                     "payout": calculate_payout(txn_wager_amount, txn_odds),
                     "outcome": txn_outcome,
                     "timestamp": timestamp,
