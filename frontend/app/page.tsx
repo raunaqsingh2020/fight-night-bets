@@ -119,7 +119,7 @@ export default function Home() {
             <input type="checkbox" name="accordion-1" id="cb2" />
             <label htmlFor="cb2" className="tab__label">Charity?</label>
             <div className="tab__content">
-              <p>Any profit made will be donated tp a charity. All profits at the end will be split evenly to the 5 winners and donated under their name to a charity of their choice.</p>
+              <p>Though we do not expect to make profit, any profit potentially made will be given away. All profits at the end will be split evenly to the 5 winners and donated under their name to a charity of their choice.</p>
             </div>
           </div>
 
