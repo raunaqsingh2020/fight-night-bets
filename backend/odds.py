@@ -59,6 +59,11 @@ def calculate_american_odds(event: int, max_bet: float = 10.0) -> float:
         # outcome_b_wagers_unresolved_sum,
     ) = check_amount_in_pools(event)
 
+    # print(event)
+    # print(outcome_a_wagers_resolved_sum)
+    # print(outcome_b_wagers_resolved_sum)
+    # print(outcome_a_wagers_resolved_sum + outcome_b_wagers_resolved_sum)
+
     INIT_AMOUNT = 100
     SPREAD = (
         0 if outcome_a_wagers_resolved_sum + outcome_b_wagers_resolved_sum < 100 else 5
@@ -94,13 +99,13 @@ def calculate_american_odds(event: int, max_bet: float = 10.0) -> float:
 
     if outcome_b_odds > 0 and outcome_b_odds < 100:
         outcome_b_odds = -1.0 * (100.0 / outcome_b_odds) * 100.0
-    
+
     outcome_a_odds = int(outcome_a_odds)
     outcome_b_odds = int(outcome_b_odds)
 
     if outcome_a_odds == -100:
         outcome_a_odds = 100
-    
+
     if outcome_b_odds == -100:
         outcome_b_odds = 100
 
