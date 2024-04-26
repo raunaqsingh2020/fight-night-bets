@@ -9,7 +9,7 @@ import Moneyline from './components/Moneyline';
 import Cart from './components/Cart';
 
 export default function Home() {
-  const [status, setStatus] = useState<boolean>(true);
+  const [status, setStatus] = useState<boolean>(false);
   const [currentOdds, setCurrentOdds] = useState<any>([]);
 
   const [selectedOutcome, setSelectedOutcome] = useState<any>(null);
