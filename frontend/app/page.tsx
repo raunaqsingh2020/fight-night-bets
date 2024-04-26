@@ -96,7 +96,7 @@ export default function Home() {
             <p style={{ fontSize: 14, opacity: 0.8, fontWeight: 400 }}>26 April • 7-8 PM</p>
           </div>
 
-          <p className="section">Currently experiencing technical difficulties... check back soon!</p>
+          <p className="section">We are not accepting any bets at this time. Enjoy the fight night!</p>
         </div>
       </div>
     );
