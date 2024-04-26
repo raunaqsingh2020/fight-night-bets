@@ -111,9 +111,9 @@ def calculate_american_odds(event: int, max_bet: float = 10.0) -> float:
     
     # adding extra spread to the heavy favorite
     if outcome_a_odds < -130:
-        outcome_a_odds = outcome_a_odds * 1.05
+        outcome_a_odds = int(outcome_a_odds * 1.05)
     if outcome_b_odds < -130:
-        outcome_b_odds = outcome_b_odds * 1.05
+        outcome_b_odds = int(outcome_b_odds * 1.05)
 
     return outcome_a_odds, outcome_b_odds
 
