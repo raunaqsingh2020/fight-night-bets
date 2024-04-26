@@ -70,13 +70,13 @@ export default function Cart({ selected_event_id, selected_outcome, odds }: any)
         const formattedOdds = formatNumberWithSign(upToDateOdds);
 
         const venmo_username = "arham_habibi"; // TODO
-        let comment = `${selected_outcome} (${formattedOdds}) - for: $${payout.toFixed(2)}`;
+        let comment = `${selected_outcome} (${formattedOdds}) - Winning Payout: $${payout.toFixed(2)}`;
         comment = comment.replace("$", "%24");
         comment = comment.replace("+", "%2B");
 
         comment += `
         
-        **Note: Lines can move, submit quickly! Final might be marginally different**`
+        **Note: Odds subject to line movement, submit quickly!**`
 
         let link = isMobile ? "venmo://paycharge?" : "https://account.venmo.com/pay?";
         link += `txn=pay&recipients=${venmo_username}&note=${comment}&amount=${wagerAmount}`;
