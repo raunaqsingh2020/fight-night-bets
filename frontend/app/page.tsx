@@ -87,16 +87,16 @@ export default function Home() {
   if (!status) {
     return (
       <div>
-        <NavBar />
-        <div style={{ padding: 16 }}>
-          <div className="header">
+        {/* <NavBar /> */}
+        <div style={{ padding: 16, display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
+          {/* <div className="header">
             <p style={{ fontSize: 28, fontWeight: 600 }}>HUNTS VS MT</p>
             <p className="title" style={{ fontWeight: 600 }}>FIGHT NIGHT</p>
             <p style={{ fontSize: 14, opacity: 0.8, fontWeight: 400 }}>FIGHT FOR THE GREATEST</p>
             <p style={{ fontSize: 14, opacity: 0.8, fontWeight: 400 }}>26 April • 7-8 PM</p>
-          </div>
+          </div> */}
 
-          <p className="section">We are not accepting any bets at this time. Enjoy the fight night!</p>
+          <p className="section">hope everyone had fun :)</p>
         </div>
       </div>
     );
